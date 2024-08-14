@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+  <style>
+    .flex-col {
+      margin-bottom: 15px;
+    }
+
+    .form-label {
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .form-control,
+    .form-control-sm {
+      border-radius: 5px;
+      border: 1px solid #ced4da;
+    }
+
+    .btn-secondary {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 15px;
+      font-size: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+    }
+
+    /*  .custom-container {
+    width: 50%; 
+    max-width: 1200px; 
+    margin: auto; 
+  } */
+
+    .formStyle {
+      display: flex;
+      flex-wrap: wrap;
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
+      align-items: flex-end;
+    }
+
+    .taskTableStyle {
+      display: flex;
+      flex-wrap: wrap;
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
+      align-items: flex-end;
+    }
+
+    .dropdown-custom {
+      position: relative;
+      width: 100%;
+
+    }
+
+    .dropdown-custom select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 100%;
+      padding: 0.5rem 2rem 0.5rem 0.5rem;
+      /* ปรับขนาดของ dropdown ตามความเหมาะสม */
+      border: 1px solid #ced4da;
+      border-radius: 0.25rem;
+      background-color: #fff;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M7 10l5 5 5-5H7z"/></svg>');
+      /* เพิ่มลวดลายลูกศร */
+      background-repeat: no-repeat;
+      background-position: right 0.5rem center;
+    }
+
+    .dropdown-custom select:focus {
+      outline: none;
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .dropdown-custom i {
+      position: absolute;
+      top: 50%;
+      right: 0.5rem;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #6c757d;
+    }
+
+
+    .modal-dialog {
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .link-with-dot::before {
+      content: "• ";
+      color: black;
+      font-weight: bold;
+    }
+
+    .text-black.text-decoration-none {
+      color: black !important;
+      text-decoration: none !important;
+    }
+
+
+    .modal-content {
+      background-color: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid #eeeeee;
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+    }
+
+    .modal-title {
+      color: #333333;
+      font-size: 24px;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .modal-footer {
+      border-top: 1px solid #eeeeee;
+      padding: 20px;
+      text-align: right;
+    }
+
+    .btn-close {
+      background-color: transparent;
+      border: none;
+      font-size: 24px;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+
+    }
+
+    .modal-body.overflow-y-auto {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .table-responsive tbody {
+      display: block;
+      max-height: 300px;
+      /* หรือความสูงที่ต้องการ */
+      overflow-y: auto;
+    }
+
+    .table-responsive thead,
+    .table-responsive tbody tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+      /* ให้แต่ละแถวมีความกว้างเท่ากัน */
+    }
+
+    .table-responsive {
+      width: 100%;
+    }
+
+    .scrollbar-custom {
+      display: block;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+
+    /* ปรับแต่ง scrollbar */
+    .scrollbar-custom::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    .scrollbar-custom::-webkit-scrollbar-track {
+      background: #E9ECEF;
+    }
+
+    .scrollbar-custom::-webkit-scrollbar-thumb {
+      background-color: #6c757d;
+      /* border-radius: 5px;  */
+      /* border: 3px solid orange;  */
+    }
+
+
+
+
+
+    .table-responsive {
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .table thead th {
+      background-color: #E9ECEF;
+      /* ปรับสีพื้นหลังของหัวตาราง */
+      color: #6c757d;
+      /* ปรับสีข้อความของหัวตาราง */
+      border-bottom: 2px solid #E9ECEF;
+      /* ปรับสีขอบของหัวตาราง */
+      padding-top: 20px;
+      /* เพิ่ม padding ด้านบน */
+      padding-bottom: 20px;
+      /* เพิ่ม padding ด้านล่าง */
+    }
+
+    .table tbody td {
+      background-color: #f8f9fa;
+      padding: 20px
+        /* ปรับสีพื้นหลังของเนื้อหาตาราง */
+    }
+
+
+    .table .btn {
+      font-size: 0.8em;
+    }
+
+    .file-list {
+      padding: 0;
+      list-style: none;
+    }
+
+    .file-list li {
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #f8f9fa;
+    }
+
+    .file-list li a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .file-list li a:hover {
+      text-decoration: underline;
+    }
+
+    .filelist-scrollbar-custom {
+      display: block;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    /* ปรับแต่ง scrollbar */
+    .filelist-scrollbar-custom::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    .filelist-scrollbar-custom::-webkit-scrollbar-track {
+      background: #E9ECEF;
+    }
+
+    .filelist-scrollbar-custom::-webkit-scrollbar-thumb {
+      background-color: #6c757d;
+      /* border-radius: 5px;  */
+      /* border: 3px solid orange;  */
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .bounce-icon {
+      animation: bounce 1s infinite alternate, fadeIn 0.5s ease-in;
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(-10px);
+      }
+    }
+
+    .custom-spinner {
+      width: 5rem;
+      /* กำหนดความกว้างของ spinner */
+      height: 5rem;
+      /* กำหนดความสูงของ spinner */
+      border-width: 0.8em;
+      /* กำหนดความหนาของเส้นของ spinner */
+    }
+
+    .modal {
+      pointer-events: none;
+    }
+
+    .modal.show {
+      display: block;
+    }
+
+    .nav-style {
+      margin-left: 8%;
+    }
+
+    @media only screen and (min-height: 750px) {
+      .nav-style {
+        margin-left: 16%;
+      }
+    }
+    
+   
+
+  </style>
+
+</head>
+
+<body>
+  <nav class="navbar navbar-light bg-light ">
+    <div class=" w-100 d-flex flex-col nav-style">
+      <a class="navbar-brand" href="#">
+        <img src="https://drive.google.com/thumbnail?id=1WxiHbnVmXc2LJtDfSchxMdb01RMWsiOX&sz=w120" width="60" height="50" class="d-inline-block align-top " alt="">
+      </a>
+      <h3 class="mt-3">Cuttingplan Upload</h3>
+    </div>
+  </nav>
+
+  <div id="content1" class="content">
+    <div class="container custom-container mt-2">
+      <div class="flex flex-col p-2">
+
+
+
+
+
+
+        <div class="flex-row formStyle border p-5 ">
+
+          <!-- Project Information -->
+          <div class="flex-col me-3 ml-3" style="width: 25%;">
+            <label class="form-label me-2">Project<span class="text-danger">*</span></label>
+            <div class="dropdown-custom">
+              <select onchange="getListZone(projectCode.value)" class="form-control form-control-sm" id="projectCode">
+                <option value="Please Select" selected>Please Select</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex-col me-3" style="width: 15%;">
+            <label class="form-label me-2">Zone<span class="text-danger">*</span></label>
+            <div class="dropdown-custom">
+              <select onchange="setLastVersion(projectCode.value , zoneName.value)" class="form-control form-control-sm" id="zoneName">
+                <option value="Please Select" selected>Please Select</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex-col me-3" style="width: 15%;">
+            <label class="form-label me-2">Category<span class="text-danger">*</span></label>
+            <div class="dropdown-custom">
+              <select class="form-control form-control-sm " id="category">
+              </select>
+            </div>
+          </div>
+          <div class="flex-col me-3" style="width: 15%;">
+            <label class="form-label me-2">Version</label>
+            <input disabled type="number" class="form-control form-control-xl" id="version" >
+          </div>
+          <div class="flex-col me-3" style="width: 15%;">
+            <label class="form-label me-2">Revision<span class="text-danger">*</span></label>
+            <input  type="number" class="form-control form-control-xl" id="revision" >
+          </div>
+          <div class="flex-row me-3 w-100 h-10">
+
+          </div>
+
+          <!-- File Inputs -->
+          <div class="flex-col me-3" style="width: 20%;">
+            <label for="DXF File" class="form-label me-2">DXF File<span class="text-danger">*</span></label>
+            <input type="file" class="form-control form-control-sm" id="dxf" accept=".dxf"  multiple onchange="handleFileSelect(this)">
+          </div>
+          <div class="flex-col me-3" style="width: 20%;">
+            <label for="PDF File" class="form-label me-2">PDF File<span class="text-danger">*</span></label>
+            <input  type="file" class="form-control form-control-sm" id="pdf" accept=".pdf"  multiple onchange="handleFileSelect(this)">
+          </div>
+          <div class="flex-col me-3" style="width: 20%;">
+            <label for="TXT File" class="form-label me-2">TXT File<span class="text-danger">*</span></label>
+            <input type="file" class="form-control form-control-sm" id="txt" accept=".txt"  multiple onchange="handleFileSelect(this)">
+          </div>
+          <div class="flex-col me-3" style="width: 20%;">
+            <label for="XLS File" class="form-label me-2">XLS File<span class="text-danger">*</span></label>
+            <input disabled type="file" class="form-control form-control-sm" id="xls" accept=".xls,.xlsx"  multiple onchange="handleFileSelect(this)">
+          </div>
+
+          <!-- Upload Button -->
+          <div class="flex-col">
+            <button class="btn btn-secondary btn-sm" onclick="createdFolder()" style="height: 30px; margin-top: 20px; line-height: 10px;">Upload</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <div class="flex container mb-5 p-2">
+      <div class="d-flex justify-content-end mb-4 mt-1 ml-1 w-100">
+        <input type="text" id="searchTask" onkeyup="searchTask()" placeholder="Search for Task.." class="form-control ml-auto w-50">
+      </div>
+      <!-- <h3 class="mt-3 mb-3">Task Queue</h3> -->
+      <div class="table-responsive border ">
+        <table class="table border table-sm mb-5 text-center">
+          <thead>
+            <tr>
+              <th>ProjectCode</th>
+              <th>Zone</th>
+              <th>Category</th>
+              <th>Version</th>
+              <th>Revision</th>
+              <th style="padding-right: 20px;"> Status</span></th>
+              <th class="text-center" style="padding-right: 20px;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="dataTableTask" class="scrollbar-custom">
+            <!-- Submitted data will be displayed here -->
+          </tbody>
+        </table>
+      </div>
+
+
+
+
+
+      <!-- Modal Template -->
+      <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="cardModalLabel"></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="container">
+                <div class="d-flex  w-100"> 
+                  <span  style="padding-right:13%;">(Cutting Plan) DXF Files</span>
+                  <span  style="padding-right:12%;" >(Cutting Plan) TXT Files</span>
+                  <span style="">(Cutting Plan) DXF Files</span>
+                  <!-- <h5 class="text-center" style="flex-grow: 1; margin-left: 18%;">(Cutting Plan) TXT Files</h5>
+                  <h5>(Cutting Plan) PDF Files</h5> -->
+                  <!-- <h5 style="visibility: hidden;">Placeholder</h5>  -->
+                </div>
+              </div>
+
+
+              <div class="file-container" style="display: flex;  max-height: 400px;">
+                <div class="dxf-files" style="flex: 1; overflow-y: auto; margin-right: 10px; padding: 10px;">
+                  <div id="dxfFilesList" class="file-list filelist-scrollbar-custom">
+                    <!-- DXF files will be listed here -->
+                  </div>
+                </div>
+                <div class="text-files" style="flex: 1; overflow-y: auto; padding: 10px;">
+                  <div id="textFilesList" class="file-list filelist-scrollbar-custom">
+                    <!-- Text files will be listed here -->
+                  </div>
+                </div>
+                <div class="text-files" style="flex: 1; overflow-y: auto; padding: 10px;">
+                  <div id="pdfFilesList" class="file-list filelist-scrollbar-custom">
+                    <!-- Text files will be listed here -->
+                  </div>
+                </div>
+              </div>
+
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <div id="content2" class="content" style="display:none;">
+    <div class="container custom-container mt-2">
+      <h3 class="mb-4">Cleansing Data</h3>
+      <div class="d-flex justify-content-end mb-4 mt-1 ml-1 w-100">
+        <input type="text" id="searchClean" onkeyup="searchClean()" placeholder="Search for Data.." class="form-control ml-auto w-50">
+      </div>
+      <div class="table-responsive border mt-3 mb-5">
+        <table class="table border table-sm mb-5 text-center">
+          <thead>
+            <tr>
+              <th>Plat Number</th>
+              <th>Dimensions</th>
+              <th>Version</th>
+              <th>Order</th>
+              <th>Area</th>
+              <th>Article</th>
+              <th>Quality</th>
+              <th>NC File</th>
+              <th>Drawing</th>
+              <th>Movement</th>
+              <th>Status</th>
+              <!-- <th class="text-center">Action</th> -->
+            </tr>
+          </thead>
+          <tbody id="dataTableClean" class="scrollbar-custom">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content d-flex justify-content-center align-items-center">
+        <div class="modal-body text-center">
+          <h1 class="mt-3"><i class="bi bi-check-circle text-success bounce-icon" style="font-size: 5rem;"></i></h1>
+          <h5 class="mt-3 mb-2">Upload Success</h5>
+          <button type="button" class="btn btn-secondary mt-3 mb-2" data-dismiss="modal" onclick="closeSuccessModal()" style="height: 35px; margin-top: 20px; line-height: 10px;">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+    aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+
+        <div class="modal-body">
+          <div class="text-center">
+            <div class="mt-5 spinner-border custom-spinner text-secondary" role="status">
+              <h1><span class="sr-only">Loading...</span></h1>
+            </div>
+            <h5 class="mt-5 mb-5">Please wait upload</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    setDataTransectionTable();
+    google.script.run.withSuccessHandler(setListProject).getListProjectCode();
+    google.script.run.withSuccessHandler(setListCategory).getListCategoryName();
+
+    
+  });
+
+  
+
+  function setListProject(listProject) {
+    let projectCodeDropdown = document.getElementById('projectCode');
+    
+    listProject.forEach(function(project) {
+      let optionElem = document.createElement('option');
+      optionElem.value = project;
+      optionElem.textContent = project;
+      projectCodeDropdown.appendChild(optionElem);
+    });
+  }
+  
+
+  function getListZone(project) {
+    document.getElementById('zoneName').innerHTML = "";
+    const projectCode = project.split(" ")[0];
+    google.script.run.withSuccessHandler(setListZone).getListZoneName(projectCode);
+  }
+
+  function setListZone(listZone) {
+    if(listZone.length > 0){
+      let zoneNameDropdown = document.getElementById('zoneName');
+      let defaultElem = document.createElement('option');
+      defaultElem.value = "please select";
+      defaultElem.textContent = "please select";
+      zoneNameDropdown.appendChild(defaultElem);
+      listZone.forEach(function(zone) {
+        let optionElem = document.createElement('option');
+        optionElem.value = zone;
+        optionElem.textContent = zone;
+        zoneNameDropdown.appendChild(optionElem);
+      });
+    }else{
+      // let zoneNameDropdown = document.getElementById('zoneName');
+      // let defaultElem = document.createElement('option');
+      // defaultElem.value = "not found";
+      // defaultElem.textContent = "not found";
+      // zoneNameDropdown.appendChild(defaultElem);
+    }
+    
+  }
+
+  function setListCategory(listCategory) {
+    let categoryDropdown = document.getElementById('category');
+    listCategory.forEach(function(category) {
+      let optionElem = document.createElement('option');
+      optionElem.textContent = category;
+      categoryDropdown.appendChild(optionElem);
+    });
+  }
+
+  function setLastVersion(project , zone) {
+    document.getElementById('version').value = "";
+    const projectCode = project.split(" ")[0];
+    google.script.run.withSuccessHandler(function(lastVersion){
+      document.getElementById('version').value = lastVersion;
+    }).getLastVersion(projectCode , zone);
+  }
+
+  function switchContent(contentId) {
+  var contents = document.getElementsByClassName('content');
+  for (var i = 0; i < contents.length; i++) {
+    contents[i].style.display = 'none'; 
+  }
+  document.getElementById(contentId).style.display = 'block';
+  if(contentId === "content2"){
+    setDataCleanTable();
+  }
+}
+
+  function setDataTransectionTable (){
+    google.script.run.withSuccessHandler(renderTableTransaction).getTransactionData();
+  }
+
+  function setDataCleanTable (){
+    google.script.run.withSuccessHandler(renderTableClean).getSheetCleanData();
+  }
+
+  
+
+  function renderTableTransaction(dataTask) {
+  var tbody = document.getElementById('dataTableTask');
+  tbody.innerHTML = ''; // ล้างข้อมูลเก่าในตาราง
+  
+  dataTask.forEach(function(row, rowIndex) {
+    var tr = document.createElement('tr');
+  
+    for (let i = 1; i <= 5; i++) {
+        var td = document.createElement('td');
+        td.textContent = row[i];
+        tr.appendChild(td);
+    }
+    
+ 
+    var statusTd = document.createElement('td');
+    statusTd.textContent = row[7];
+    tr.appendChild(statusTd);
+
+    var actionTd = document.createElement('td');
+    actionTd.className = 'text-center';
+
+    var viewButton = document.createElement('button');
+    viewButton.className = 'btn btn-sm bt-icon-style';
+    viewButton.style.height = '30px'; 
+    viewButton.style.lineHeight = '10px';
+    viewButton.innerHTML = '<i class="fas fa-search"></i>';
+    viewButton.setAttribute('data-bs-toggle', 'modal');
+    viewButton.setAttribute('data-bs-target', '#cardModal');
+    
+    viewButton.onclick = function() {
+        document.querySelector('#cardModalLabel').textContent = `Project : ${row[1]} - Zone : ${row[2]} - Version : ${row[4]}`;
+        google.script.run.withSuccessHandler(function(files) {
+            var dxfFilesList = document.getElementById('dxfFilesList');
+            var textFilesList = document.getElementById('textFilesList');
+            var pdfFilesList = document.getElementById('pdfFilesList');
+            dxfFilesList.innerHTML = '';
+            textFilesList.innerHTML = '';
+            pdfFilesList.innerHTML = '';
+            
+            files.forEach(file => {
+                if (file.type === 'application/dxf') {
+                    dxfFilesList.innerHTML += `<li><i class="fas fa-drafting-compass p-2" style="color: #007BFF;"></i> <a href="https://drive.google.com/file/d/${file.id}/view" target="_blank">${file.name}</a></li>`;
+                } else if (file.type === 'text/plain') {
+                    textFilesList.innerHTML += `<li><i class="fas fa-file-alt p-2" style="color: #007BFF;"></i> <a href="https://drive.google.com/file/d/${file.id}/view" target="_blank">${file.name}</a></li>`;
+                }else if (file.type === 'application/pdf') {
+                    pdfFilesList.innerHTML += `<li><i class="fas fa-file-alt p-2" style="color: #007BFF;"></i> <a href="https://drive.google.com/file/d/${file.id}/view" target="_blank">${file.name}</a></li>`;
+                }
+            });
+        }).listFilesInFolder(row[6]); 
+    };
+    actionTd.appendChild(viewButton);
+
+
+    var deleteButton = document.createElement('button');
+    deleteButton.className = 'btn  btn-sm';
+    deleteButton.style.height = '30px';
+    deleteButton.style.lineHeight = '10px';
+    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+    
+    deleteButton.onclick = function() {
+
+      showConfirmAlert().then((result) => {
+        if (result) {
+          showLoading();
+          google.script.run.withSuccessHandler(function() {
+          showSweetAlert("Delete success" , false);
+          setDataTransectionTable();
+          console.log(row[8]);
+        }).deleteByZipID(row[8],row[6]);
+        } else {
+          console.log("User cancelled the action");
+        }
+      }).catch(error => console.error(error));
+
+        
+    };
+    actionTd.appendChild(deleteButton);
+
+    tr.appendChild(actionTd);
+    tbody.appendChild(tr);
+  });
+}
+
+
+function uploadProgress(){
+  let timerInterval; 
+  let totalFiles = 100; 
+  let uploadedFiles = 0; 
+
+  Swal.fire({
+    title: "Uploading files...",
+    html: `Uploaded <b></b> out of ${totalFiles} files.`,
+    timerProgressBar: true,
+    didOpen: () => {
+      Swal.showLoading();
+      const timer = Swal.getPopup().querySelector("b");
+      timerInterval = setInterval(() => { 
+        uploadedFiles++; 
+        timer.textContent = `${uploadedFiles}`; 
+        if (uploadedFiles >= totalFiles) {
+          clearInterval(timerInterval); 
+          Swal.close(); 
+        }
+      }, 200); 
+    },
+    willClose: () => {
+      clearInterval(timerInterval); 
+    }
+  }).then((result) => {
+    if (result.dismiss === Swal.DismissReason.timer) {
+      // console.log("I was closed by the timer");
+    }
+  });
+}
+
+
+
+
+
+function renderTableClean(dataClean) {
+  
+  var tbody = document.getElementById('dataTableClean');
+  tbody.innerHTML = ''; 
+  
+  dataClean.forEach(function(row, rowIndex) {
+    var tr = document.createElement('tr');
+    for (let i = 1; i <= 11; i++) {
+        var td = document.createElement('td');
+        td.textContent = row[i];
+        tr.appendChild(td);
+    }
+    
+    var statusTd = document.createElement('td');
+    statusTd.textContent = row[6];
+    tr.appendChild(statusTd); 
+    tbody.appendChild(tr);
+});
+}
+
+  function searchTask() {
+  var input, filter, table, tr, i;
+  input = document.getElementById("searchTask"); 
+  filter = input.value.toUpperCase();
+  table = document.getElementById("dataTableTask"); 
+  tr = table.getElementsByTagName("tr");
+
+  // ลูปผ่านทุกแถวของตารางและซ่อนแถวที่ไม่ตรงกับการค้นหา
+  for (i = 0; i < tr.length; i++) {
+    let tds = tr[i].getElementsByTagName("td");
+    let textContent = Array.from(tds).map(td => td.textContent || td.innerText).join(' '); 
+
+    // แสดงแถวถ้าตรงกับการค้นหา
+    if (textContent.toUpperCase().indexOf(filter) > -1) {
+      tr[i].style.display = "";
+    } else {
+      tr[i].style.display = "none";
+    }
+  }
+}
+
+    
+    function searchClean() {
+  var input, filter, table, tr, i;
+  input = document.getElementById("searchClean"); 
+  filter = input.value.toUpperCase();
+  table = document.getElementById("dataTableClean");
+  tr = table.getElementsByTagName("tr");
+
+  for (i = 0; i < tr.length; i++) {
+    let display = false; 
+
+
+    for (let j = 0; j < tr[i].cells.length; j++) {
+      let td = tr[i].getElementsByTagName("td")[j];
+      if (td) {
+        let txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          display = true; 
+          break; 
+        }
+      }
+    }
+
+    if (display) {
+      tr[i].style.display = "";
+    } else {
+      tr[i].style.display = "none";
+    }
+  }
+}
+
+
+
+
+    function setFolderSelector(listFolder){
+    var fileSelector = document.getElementById('folderSelector');
+    fileSelector.innerHTML = ''; // Clear existing options
+    listFolder.forEach(option => {
+      var optionElement = document.createElement('option');
+      optionElement.value = option;
+      optionElement.text = option;
+      fileSelector.add(optionElement);
+    });
+    if (listFolder.length > 0) {
+        var lastOption = listFolder[listFolder.length - 1];
+        fileSelector.value = lastOption;
+        var setDataSelector = document.getElementById('dataSelector');
+        setDataSelector.disabled = !dataSelector;
+    }
+    }
+
+          
+
+
+
+    function getFileInFolder(){
+      var folderName = document.getElementById('folderSelector').value;
+      google.script.run.withSuccessHandler(setDataTable).getFilesInFolder(folderName);
+      showSweetAlert(`Get Data Table(${folder}) Successfully`, false);
+    }
+
+    
+  
+  
+
+
+
+    function fetchData(selectedTable) {
+      showLoading();
+      google.script.run.withSuccessHandler(function (data) {
+        updateTable(data, selectedTable);
+      }).fetchDataFromAPI(selectedTable);
+    }
+
+    
+
+    
+
+
+    function showLoading(){
+      Swal.fire({
+        title: 'Loading',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+    }
+
+
+    function showSweetAlert(message, isError) {
+    var alertConfig = {
+        title: isError ? 'Error' : 'Success!',
+        text: message,
+        icon: isError ? 'error' : 'success',
+        confirmButtonText: 'OK'
+    };
+
+    Swal.fire(alertConfig).then((result) => {
+        if (result.isConfirmed && !isError) {
+            /* google.script.run.withSuccessHandler(updateTable).getData(); */
+        }
+    });
+}
+
+function showConfirmAlert() {
+  return Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!"
+  }).then((result) => {
+    return result.isConfirmed;
+  }).catch(error => console.error(error));
+}
+
+
+function readFileContent(fileInput) {
+  var file = fileInput.files[0];
+
+  if (file) {
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      // e.target.result เป็นข้อมูลที่ได้อ่านจากไฟล์
+      // console.log("File Content:", e.target.result);
+    };
+
+    reader.readAsText(file);
+  }
+}
+var dxfSelected = [];
+var pdfSelected = [];
+var txtSelected = [];
+var xlsSelected = [];
+var zipData = [];
+function handleFileSelect(input) {
+  var files = input.files;
+  if (files.length > 0) {
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var fileName = file.name;
+      var fileType =  fileName.slice(-3);
+      switch(fileType) {
+        case "dxf": 
+                dxfSelected.push(file);
+                break;
+        case "pdf": 
+                pdfSelected.push(file);
+                break;
+        case "txt": 
+                txtSelected.push(file);
+                break;
+        case "xls":
+        case "lsx": 
+                xlsSelected.push(file);
+                break;
+      }; 
+    }
+  }
+}
+
+var transection_id
+// var date
+function createdFolder() {
+  var project_name = document.getElementById('projectCode').value;
+  var zone_number = document.getElementById('zoneName').value;
+  var category = document.getElementById('category').value;
+  var version_number = document.getElementById('version').value;
+  const randomNumber = Math.floor(Math.random() * (9 - 1 + 1)) + 1;
+  if(project_name && zone_number && category && version_number && dxfSelected.length > 0 && txtSelected.length > 0){
+  showLoading();
+  // openUploadingModal();
+  var timestamp = Date.now();
+  var dateObject = new Date(timestamp);
+  var formattedDate = dateObject.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    timeZone: 'Asia/Bangkok'
+  }).replace(/\//g, '');
+  var formattedTime = dateObject.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Bangkok'
+  }).replace(/:/g, '');
+  transection_id = `${formattedDate}${formattedTime}${randomNumber}`;
+  google.script.run.withSuccessHandler(uploadFile).getOrCreateFolder( transection_id );
+  }else{
+    showSweetAlert("Please fill in all the required information" , true);
+    clearText();
+  }
+}
+
+function upFileToDrive(folder_id){
+  console.log("test 55555");
+  var transectionID = transection_id; 
+  if(folder_id){
+    setTimeout(function() {
+    google.script.run.withSuccessHandler(triggerUpload).createZipFileToDrive(folder_id,zipData,transectionID);
+    }, 10000);
+  }else{
+      showSweetAlert('Upload Failed' , true);
+      google.script.run.deleteFolder(attach_id);
+      clearText();
+  }
+}
+
+let zip_id = "";
+function triggerUpload(id){
+  zip_id = id;
+  var project = document.getElementById('projectCode').value;
+  const projectCode = project.split(" ")[0];
+  var zoneName = document.getElementById('zoneName').value;
+  var category = document.getElementById('category').value;
+  var version = document.getElementById('version').value;
+  var revision = document.getElementById('revision').value;
+  google.script.run.withSuccessHandler(saveTransaction).reqCleanData(zip_id, projectCode, zoneName, category, version , revision);
+}
+
+function saveTransaction(response){
+  var project = document.getElementById('projectCode').value;
+  const projectCode = project.split(" ")[0];
+  var zoneName = document.getElementById('zoneName').value;
+  var category = document.getElementById('category').value;
+  var version = document.getElementById('version').value;
+  var revision = document.getElementById('revision').value;
+  const result = JSON.parse(response);
+
+  if(result.code == 200){
+    
+    google.script.run.withSuccessHandler(function(){
+      setDataTransectionTable();
+      showSweetAlert(result.description , false);
+      clearText();
+      
+    }).saveDataToSheet( transection_id ,projectCode,zoneName, category ,version, revision ,attach_id,"success",zip_id);
+  }else{
+    
+    google.script.run.withSuccessHandler(function(){
+      setDataTransectionTable();
+      showSweetAlert(result.description , true);
+      clearText();
+    }).saveDataToSheet( transection_id ,projectCode,zoneName, category ,version,revision ,attach_id,"error",zip_id);
+  }
+  
+
+  
+
+  
+}
+
+function clearText(){
+  document.getElementById('version').value = '';
+  document.getElementById('dxf').value = '';
+  document.getElementById('pdf').value = '';
+  document.getElementById('txt').value = '';
+  zipData = [];
+  attach_id = "";
+  dxfSelected = [];
+  pdfSelected = [];
+  txtSelected = [];
+  xlsSelected = [];
+}
+
+
+
+ var attach_id = "";
+ function uploadFile(folderId) {
+  var projectCode = document.getElementById('projectCode').value;
+  var zoneName = document.getElementById('zoneName').value;
+  var category = document.getElementById('category').value;
+  var version = document.getElementById('version').value;
+  attach_id = folderId;
+  var allSelected = [...dxfSelected, ...txtSelected, ...pdfSelected];
+  var progress = 0;
+  var end = allSelected.length - 1;
+
+  function uploadFile(file, attach_id) {
+  return new Promise((resolve, reject) => {
+    var fileR = new FileReader();
+    fileR.onload = function (e) {
+      var vals = fileR.result.split(',');
+      var resultData = vals[1];
+      var obj = {
+        fileName: file.name,
+        mimeType: file.type,
+        data: resultData
+      };
+      if (obj.mimeType === "application/pdf" || obj.mimeType === "text/plain") {
+        zipData.push(obj);
+      }
+      google.script.run.withFailureHandler(function (error) {
+        showSweetAlert(error, true);
+        google.script.run.deleteFolder(attach_id);
+        reject(error);
+      }).withSuccessHandler(function(response) {
+        resolve(response);
+      }).upload(obj, attach_id);
+    };
+
+    fileR.onerror = function (error) {
+      showSweetAlert(error, false);
+      reject(error);
+    };
+
+    fileR.readAsDataURL(file);
+  });
+}
+
+async function uploadFiles(files, attach_id) {
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const maxConcurrentUploads = 50;
+
+  let timerInterval;
+  let uploadedFiles = 0; 
+  const totalFiles = files.length;
+
+  Swal.fire({
+    title: "Uploading files...",
+    html: `<b></b> out of  <strong>${totalFiles}</strong> files.`,
+    timerProgressBar: true,
+    didOpen: () => {
+      Swal.showLoading();
+      const timer = Swal.getPopup().querySelector("b");
+      timer.textContent = `${uploadedFiles}`;
+      timerInterval = setInterval(() => {
+        timer.textContent = `${uploadedFiles}`; 
+      }, 100); 
+    },
+    willClose: () => {
+      clearInterval(timerInterval); 
+    }
+  });
+
+for (let i = 0; i < files.length; i += maxConcurrentUploads) {
+    const fileChunk = files.slice(i, i + maxConcurrentUploads);
+    const uploadPromises = fileChunk.map(async file => {
+      try {
+        await uploadFile(file, attach_id);
+        uploadedFiles++; 
+      } catch (error) {
+        console.error("Error uploading file", error);
+        throw error;
+      }
+    });
+
+    try {
+      await Promise.all(uploadPromises);
+    } catch (error) {
+      console.error("Error uploading files", error);
+      throw error;
+    }
+
+    await delay(100); 
+  }
+
+  Swal.fire({
+    title: 'Upload files success',
+    html: ' Please wait ETL Processing',
+    icon: 'info',
+    allowOutsideClick: false, 
+    allowEscapeKey: false,    
+    showConfirmButton: false, 
+    willOpen : () => {
+      Swal.showLoading(); 
+    }
+  });
+
+  upFileToDrive(attach_id);
+}
+
+
+
+if (allSelected.length > 0) {
+  uploadFiles(allSelected, attach_id);
+} else {
+  console.log("No files selected for upload.");
+}
+}
+
+  // $(document).ready(function(){
+    
+  // });
+
+
+
+  // เรียกใช้ฟังก์ชันเพื่อเปิด Alert Modal
+  // function openUploadingModal() {
+  //   $('#loadingModal').modal('show');
+    
+  // }
+
+  // function closeUploadingModal() {
+  //   $('#loadingModal').modal('hide');
+  // }
+
+
+
+  // function openSuccessModal() {
+  //   $('#successModal').modal('show');
+  // }
+
+  // function closeSuccessModal() {
+  //   $('#successModal').modal('hide');
+  // }
+
+
+
+  function uploadXLSFormat (projectCode,zoneName,category,version) {
+    var xlsFiles = xlsSelected;
+    for(i = 0 ; i < xlsFiles.length; i++){
+      console.log(i);
+      const reader = new FileReader();
+                reader.onload = function(event) {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], {header: 1});
+                    console.log(worksheet);
+                    google.script.run.withSuccessHandler(function(response){
+                      console.log(response);
+                      if(response === "Upload Success"){
+                        // closeUploadingModal();
+                        // openSuccessModal();
+                      }
+                      
+                    }).saveDataToSheet(worksheet,projectCode,zoneName,category,version);
+                };
+                reader.readAsArrayBuffer(xlsFiles[i]);
+    }
+
+  }
+
+
+  
+
+
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
